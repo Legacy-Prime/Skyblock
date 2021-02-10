@@ -1,13 +1,23 @@
 package me.mrletsplay.skyblock;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import me.mrletsplay.mrcore.bukkitimpl.ItemUtils;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUI;
@@ -15,11 +25,15 @@ import me.mrletsplay.mrcore.bukkitimpl.gui.GUIBuilder;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUIElement;
 import me.mrletsplay.mrcore.bukkitimpl.gui.event.GUIBuildEvent;
 import me.mrletsplay.mrcore.bukkitimpl.versioned.VersionedMaterial;
+import me.mrletsplay.skyblock.composter.Composter;
+import me.mrletsplay.skyblock.composter.ComposterLevel;
+import world.bentobox.bentobox.BentoBox;
 
 public class GUIs {
 	
 	public static final GUI
-		GRINDER = buildGrinderGUI();
+		GRINDER = buildGrinderGUI(),
+		COMPOSTER_SELECT = buildComposterSelectGUI();
 	
 	private static GUI buildGrinderGUI() {
 		GUIBuilder b = new GUIBuilder("§6Grinder", 5);
@@ -101,10 +115,80 @@ public class GUIs {
 		return b.create();
 	}
 	
+	private static GUI buildComposterSelectGUI() {
+		GUIBuilder b = new GUIBuilder("§6Composter", 1);
+		int i = 0;
+		for(ComposterLevel l : Composter.LEVELS) {
+			b.addElement(i, new GUIElement() {
+				
+				@Override
+				public ItemStack getItem(GUIBuildEvent event) {
+					Player p = event.getPlayer();
+//					Island i = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+//					BentoBox.getInstance().getAddonsManager().getAddonByName("Levels").get().
+					long iL = Skyblock.getLevelAddon().getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+					return createIcon(l, iL < l.getRequiredIslandLevel(), PlayerDataStore.getDataOrElse(p.getUniqueId(), "composter", Integer.class, 1) == l.getLevel());
+				}
+			}).setActionListener(event -> {
+				Player p = event.getPlayer();
+				long iL = Skyblock.getLevelAddon().getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+				if(iL < l.getRequiredIslandLevel()) return;
+				
+				UUID ownerID = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId()).getOwner();
+				PlayerDataStore.setData(ownerID, "composter", l.getLevel());
+			});
+		}
+		return b.create();
+	}
+	
+	private static ItemStack createIcon(ComposterLevel level, boolean locked, boolean selected) {
+		ItemStack it = new ItemStack(locked ? Material.BARRIER : Material.COMPOSTER);
+		ItemMeta m = it.getItemMeta();
+		m.setDisplayName("§7Composter Lvl. " + level.getLevel());
+		List<String> lore = new ArrayList<>();
+		
+		int sum = level.getLootWeights().values().stream().mapToInt(i -> i).sum();
+		
+		lore.add("§7§lLoot:");
+		level.getLootWeights().forEach((mat, w) -> {
+			BigDecimal d = BigDecimal.valueOf(w)
+					.divide(BigDecimal.valueOf(sum))
+					.multiply(BigDecimal.valueOf(100))
+					.setScale(2, RoundingMode.HALF_UP);
+			
+			lore.add("§8" + materialName(mat) + " - " + d.toString() + "%");
+		});
+		
+		if(locked) {
+			lore.add("§c§lRequired Level: " + level.getRequiredIslandLevel());
+			lore.add("§cLocked!");
+		}
+		
+		if(selected) {
+			m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			m.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+			lore.add("§2Active");
+		}
+		
+		it.setItemMeta(m);
+		
+		return it;
+	}
+	
+	private static String materialName(Material m) {
+		String s = m.name().replace('_', ' ').toLowerCase();
+		s = Character.toUpperCase(s.charAt(0)) + s.substring(1);
+		return s;
+	}
+	
 	public static Inventory getGrinderGUI(Player p, Location grinder) {
 		Map<String, Object> props = new HashMap<>();
 		props.put("grinder_location", grinder);
 		return GRINDER.getForPlayer(p, Skyblock.getPlugin(), props);
+	}
+	
+	public static Inventory getComposterSelectGUI(Player p) {
+		return COMPOSTER_SELECT.getForPlayer(p);
 	}
 
 }

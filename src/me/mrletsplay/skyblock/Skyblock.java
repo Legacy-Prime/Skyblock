@@ -16,16 +16,29 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.mrletsplay.skyblock.command.CommandComposter;
+import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
+import me.mrletsplay.skyblock.composter.ComposterEvents;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.level.Level;
 
 public class Skyblock extends JavaPlugin {
 	
 	public static List<NamespacedKey> recipes;
+	
+	private static Level levelAddon;
 
 	@Override
 	public void onEnable() {
-		PluginCommand c = getCommand("lpskyblock");
-		c.setExecutor(new CommandLPSkyblock(c));
+		PluginCommand lpsb = getCommand("lpskyblock");
+		lpsb.setExecutor(new CommandLPSkyblock(lpsb));
+		
+		PluginCommand gen = getCommand("generator");
+		gen.setExecutor(new CommandGenerator(gen));
+		
+		PluginCommand comp = getCommand("composter");
+		comp.setExecutor(new CommandComposter(comp));
 		
 		recipes = new ArrayList<>();
 		
@@ -63,7 +76,13 @@ public class Skyblock extends JavaPlugin {
 				.setIngredient('G', Material.GRAVEL)
 				.setIngredient('D', Material.DIRT));
 		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("name_tag"), new ItemStack(Material.NAME_TAG))
+				.shape("  I", " P ", "P  ")
+				.setIngredient('I', Material.IRON_INGOT)
+				.setIngredient('P', Material.PAPER));
+		
 		Bukkit.getPluginManager().registerEvents(new Events(), this);
+		Bukkit.getPluginManager().registerEvents(new ComposterEvents(), this);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
 			for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.GRINDER.name())) {
@@ -140,6 +159,12 @@ public class Skyblock extends JavaPlugin {
 	
 	public static Skyblock getPlugin() {
 		return Skyblock.getPlugin(Skyblock.class);
+	}
+	
+	public static Level getLevelAddon() {
+		if(levelAddon == null) 
+			levelAddon = (Level) BentoBox.getInstance().getAddonsManager().getAddonByName("Level").get();
+		return levelAddon;
 	}
 	
 }

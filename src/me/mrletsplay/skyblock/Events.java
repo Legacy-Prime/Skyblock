@@ -26,7 +26,7 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if(event.getBlock().getState() instanceof CreatureSpawner && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+		if(event.getBlock().getState() instanceof CreatureSpawner && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
 			event.setExpToDrop(0);
 			ItemStack i = new ItemStack(Material.SPAWNER);
 			BlockStateMeta m = (BlockStateMeta) i.getItemMeta();
@@ -39,7 +39,8 @@ public class Events implements Listener {
 		if((m = MaterialManager.getType(event.getBlock())) != null) {
 			event.setDropItems(false);
 			event.setExpToDrop(0);
-			event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), m.createItem(1));
+			if(m == CustomMaterial.GRINDER) BlockGrinder.breakGrinder(event.getBlock().getLocation());
+			if(event.getPlayer().getGameMode() != GameMode.CREATIVE) event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), m.createItem(1));
 		}
 		
 		MetadataStore.unsetMetadata(event.getBlock());

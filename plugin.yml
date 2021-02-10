@@ -3,7 +3,9 @@ name: LP-Skyblock
 version: 1.0
 author: MrLetsplay2003
 api-version: 1.13
-softdepend: [MrCore_BukkitImpl]
+softdepend: [MrCore_BukkitImpl, BentoBox]
 
 commands:
   lpskyblock:
+  composter:
+  generator:

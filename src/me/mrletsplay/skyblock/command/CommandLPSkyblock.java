@@ -9,10 +9,11 @@ public class CommandLPSkyblock extends BukkitCommand {
 	
 	public CommandLPSkyblock(PluginCommand c) {
 		super(c);
-		setDescription("LP-Skyblock admin commands");
+		setDescription("LP-Skyblock commands");
 		setUsage(null);
 		
 		addSubCommand(new CommandGive());
+		addSubCommand(new CommandReload());
 	}
 	
 	@Override

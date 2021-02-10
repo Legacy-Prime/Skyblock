@@ -1,6 +1,7 @@
 package me.mrletsplay.skyblock;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -20,6 +22,11 @@ public class Skyblock extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		recipes = new ArrayList<>();
+		
+		Iterator<Recipe> it = Bukkit.recipeIterator();
+		while(it.hasNext()) {
+			if(it.next().getResult().getType() == Material.COARSE_DIRT) it.remove();
+		}
 		
 		Bukkit.addRecipe(new ShapelessRecipe(createRecipeKey("water_bucket"), new ItemStack(Material.WATER_BUCKET))
 				.addIngredient(Material.BUCKET)
@@ -44,6 +51,11 @@ public class Skyblock extends JavaPlugin {
 				.setIngredient('I', Material.IRON_BARS)
 				.setIngredient('A', Material.ANVIL)
 				.setIngredient('P', Material.HEAVY_WEIGHTED_PRESSURE_PLATE));
+		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("coarse_dirt"), new ItemStack(Material.COARSE_DIRT, 2))
+				.shape("DG", "GD")
+				.setIngredient('G', Material.GRAVEL)
+				.setIngredient('D', Material.DIRT));
 		
 		Bukkit.getPluginManager().registerEvents(new Events(), this);
 		

@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public enum CustomMaterial {
 
-	GRINDER(Material.FURNACE, "Grinder", "Grinder go brr");
+	GRINDER(Material.FURNACE, "Grinder", "Grinds materials");
 	
 	private final Material itemMaterial;
 	private final Material blockMaterial;

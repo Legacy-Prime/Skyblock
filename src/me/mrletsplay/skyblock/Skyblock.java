@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -15,12 +16,17 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.mrletsplay.skyblock.command.CommandLPSkyblock;
+
 public class Skyblock extends JavaPlugin {
 	
 	public static List<NamespacedKey> recipes;
 
 	@Override
 	public void onEnable() {
+		PluginCommand c = getCommand("lpskyblock");
+		c.setExecutor(new CommandLPSkyblock(c));
+		
 		recipes = new ArrayList<>();
 		
 		Iterator<Recipe> it = Bukkit.recipeIterator();

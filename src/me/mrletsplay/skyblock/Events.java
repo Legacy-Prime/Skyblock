@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +33,13 @@ public class Events implements Listener {
 			m.setBlockState(event.getBlock().getState());
 			i.setItemMeta(m);
 			event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), i);
+		}
+		
+		CustomMaterial m;
+		if((m = MaterialManager.getType(event.getBlock())) != null) {
+			event.setDropItems(false);
+			event.setExpToDrop(0);
+			event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), m.createItem(1));
 		}
 		
 		MetadataStore.unsetMetadata(event.getBlock());
@@ -68,9 +76,10 @@ public class Events implements Listener {
 		}
 	}
 	
-//	@EventHandler
-//	public void onInvInterace(InventoryClickEvent event) {
-//		System.out.println(event.getAction());
-//	}
+	@EventHandler
+	public void onHarvest(PlayerHarvestBlockEvent event) {
+		System.out.println("HARVEST");
+		System.out.println(event.getHarvestedBlock());
+	}
 	
 }

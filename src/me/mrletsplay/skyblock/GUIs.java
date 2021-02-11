@@ -162,7 +162,6 @@ public class GUIs {
 		List<String> lore = new ArrayList<>();
 		
 		int sum = level.getLootWeights().values().stream().mapToInt(i -> i).sum();
-		System.out.println(sum);
 		
 		lore.add("§7§lLoot:");
 		

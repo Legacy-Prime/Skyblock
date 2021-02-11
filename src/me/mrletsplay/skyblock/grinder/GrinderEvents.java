@@ -29,7 +29,6 @@ public class GrinderEvents implements Listener {
 		if(l != null && event.getDestination().getType() == InventoryType.HOPPER) {
 			l.add(0, 1, 0);
 			if(MaterialManager.getType(l.getBlock()) == CustomMaterial.GRINDER) {
-				System.out.println("hey ho");
 				event.setCancelled(true);
 			}
 		}

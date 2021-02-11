@@ -26,6 +26,8 @@ import me.mrletsplay.skyblock.command.CommandComposter;
 import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
 import me.mrletsplay.skyblock.composter.ComposterEvents;
+import me.mrletsplay.skyblock.grinder.Grinder;
+import me.mrletsplay.skyblock.grinder.GrinderEvents;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
@@ -92,16 +94,17 @@ public class Skyblock extends JavaPlugin {
 		
 		Bukkit.getPluginManager().registerEvents(new Events(), this);
 		Bukkit.getPluginManager().registerEvents(new ComposterEvents(), this);
+		Bukkit.getPluginManager().registerEvents(new GrinderEvents(), this);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
 			for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.GRINDER.name())) {
 				ItemStack i = MetadataStore.getMetadata(l, "grinder_item", ItemStack.class);
-				if(i != null && BlockGrinder.GRINDABLE_MATERIALS.containsKey(i.getType())) {
+				if(i != null && Grinder.GRINDABLE_MATERIALS.containsKey(i.getType())) {
 					int fuelLevel = MetadataStore.getMetadataOrDefault(l, "grinder_fuel_level", Integer.class, 0);
 					if(fuelLevel <= 0) {
 						ItemStack f = MetadataStore.getMetadata(l, "grinder_fuel", ItemStack.class);
-						if(f != null && BlockGrinder.BURNABLE_ITEMS.containsKey(f.getType())) {
-							int fuel = BlockGrinder.BURNABLE_ITEMS.get(f.getType());
+						if(f != null && Grinder.BURNABLE_ITEMS.containsKey(f.getType())) {
+							int fuel = Grinder.BURNABLE_ITEMS.get(f.getType());
 							fuelLevel = fuel;
 							MetadataStore.setMetadata(l, "grinder_fuel_level", fuel);
 							MetadataStore.setMetadata(l, "grinder_fuel_level_max", fuel);
@@ -120,7 +123,7 @@ public class Skyblock extends JavaPlugin {
 						int p = MetadataStore.getMetadataOrDefault(l, "grinder_progress", Integer.class, 0) + 4;
 						if(p >= 64) {
 							// TODO: Produce item
-							ItemStack out = BlockGrinder.GRINDABLE_MATERIALS.get(i.getType());
+							ItemStack out = Grinder.GRINDABLE_MATERIALS.get(i.getType());
 							
 							ItemStack output = MetadataStore.getMetadata(l, "grinder_output", ItemStack.class);
 							

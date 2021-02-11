@@ -1,4 +1,4 @@
-package me.mrletsplay.skyblock;
+package me.mrletsplay.skyblock.grinder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class BlockGrinder {
+import me.mrletsplay.skyblock.MetadataStore;
+
+public class Grinder {
 	
 	public static final Map<Material, ItemStack> GRINDABLE_MATERIALS = new HashMap<>();
 	public static final Map<Material, Integer> BURNABLE_ITEMS = new HashMap<>();
@@ -32,9 +34,9 @@ public class BlockGrinder {
 		ItemStack output = MetadataStore.getMetadata(grinder, "grinder_output", ItemStack.class);
 		ItemStack fuel = MetadataStore.getMetadata(grinder, "grinder_fuel", ItemStack.class);
 		
-		if(input != null) grinder.getWorld().dropItemNaturally(grinder, input);
-		if(output != null) grinder.getWorld().dropItemNaturally(grinder, output);
-		if(fuel != null) grinder.getWorld().dropItemNaturally(grinder, fuel);
+		if(input != null && input.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, input);
+		if(output != null && output.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, output);
+		if(fuel != null && fuel.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, fuel);
 	}
 	
 }

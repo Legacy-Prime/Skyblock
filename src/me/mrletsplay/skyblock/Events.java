@@ -5,13 +5,14 @@ import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
+
+import me.mrletsplay.skyblock.grinder.Grinder;
 
 public class Events implements Listener {
 	
@@ -38,7 +39,7 @@ public class Events implements Listener {
 		if((m = MaterialManager.getType(event.getBlock())) != null) {
 			event.setDropItems(false);
 			event.setExpToDrop(0);
-			if(m == CustomMaterial.GRINDER) BlockGrinder.breakGrinder(event.getBlock().getLocation());
+			if(m == CustomMaterial.GRINDER) Grinder.breakGrinder(event.getBlock().getLocation());
 			if(event.getPlayer().getGameMode() != GameMode.CREATIVE) event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), m.createItem(1));
 		}
 		
@@ -65,15 +66,6 @@ public class Events implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Skyblock.recipes.forEach(r -> event.getPlayer().discoverRecipe(r));
-	}
-	
-	@EventHandler
-	public void onInteract(PlayerInteractEvent event) {
-		CustomMaterial m;
-		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (m = MaterialManager.getType(event.getClickedBlock())) != null && m == CustomMaterial.GRINDER) {
-			event.setCancelled(true);
-			event.getPlayer().openInventory(GUIs.getGrinderGUI(event.getPlayer(), event.getClickedBlock().getLocation()));
-		}
 	}
 	
 }

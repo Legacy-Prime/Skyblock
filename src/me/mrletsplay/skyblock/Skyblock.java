@@ -21,6 +21,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.mrletsplay.mrcore.misc.FriendlyException;
+import me.mrletsplay.skyblock.command.CommandBiomes;
 import me.mrletsplay.skyblock.command.CommandComposter;
 import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
@@ -44,6 +45,9 @@ public class Skyblock extends JavaPlugin {
 		
 		PluginCommand comp = getCommand("composter");
 		comp.setExecutor(new CommandComposter(comp));
+		
+		PluginCommand bi = getCommand("biomes");
+		bi.setExecutor(new CommandBiomes(bi));
 		
 		recipes = new ArrayList<>();
 		

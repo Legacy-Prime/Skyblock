@@ -158,7 +158,7 @@ public class GUIs {
 	private static ItemStack createIcon(ComposterLevel level, boolean locked, boolean selected) {
 		ItemStack it = new ItemStack(locked ? Material.BARRIER : Material.COMPOSTER);
 		ItemMeta m = it.getItemMeta();
-		m.setDisplayName("§7Composter Lvl. " + level.getLevel());
+		m.setDisplayName("§7Composter " + level.getLevel());
 		List<String> lore = new ArrayList<>();
 		
 		int sum = level.getLootWeights().values().stream().mapToInt(i -> i).sum();

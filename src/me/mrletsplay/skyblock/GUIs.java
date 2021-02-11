@@ -3,6 +3,8 @@ package me.mrletsplay.skyblock;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +33,18 @@ import world.bentobox.bentobox.BentoBox;
 
 public class GUIs {
 	
-	public static final GUI
-		GRINDER = buildGrinderGUI(),
+	public static GUI
+		GRINDER,
+		COMPOSTER_SELECT;
+	
+	static {
+		loadGUIs();
+	}
+	
+	public static void loadGUIs() {
+		GRINDER = buildGrinderGUI();
 		COMPOSTER_SELECT = buildComposterSelectGUI();
+	}
 	
 	private static GUI buildGrinderGUI() {
 		GUIBuilder b = new GUIBuilder("§6Grinder", 5);
@@ -124,19 +135,22 @@ public class GUIs {
 				@Override
 				public ItemStack getItem(GUIBuildEvent event) {
 					Player p = event.getPlayer();
-//					Island i = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
-//					BentoBox.getInstance().getAddonsManager().getAddonByName("Levels").get().
-					long iL = Skyblock.getLevelAddon().getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
-					return createIcon(l, iL < l.getRequiredIslandLevel(), PlayerDataStore.getDataOrElse(p.getUniqueId(), "composter", Integer.class, 1) == l.getLevel());
+					UUID ownerID = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId()).getOwner();
+					long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+					return createIcon(l, iL < l.getRequiredIslandLevel(), PlayerDataStore.getDataOrElse(ownerID, "composter", Integer.class, 1) == l.getLevel());
 				}
-			}).setActionListener(event -> {
+			}.setAction(event -> {
 				Player p = event.getPlayer();
-				long iL = Skyblock.getLevelAddon().getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+				long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
 				if(iL < l.getRequiredIslandLevel()) return;
 				
 				UUID ownerID = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId()).getOwner();
 				PlayerDataStore.setData(ownerID, "composter", l.getLevel());
-			});
+				
+				COMPOSTER_SELECT.refreshAllInstances();
+			}));
+			
+			i++;
 		}
 		return b.create();
 	}
@@ -148,15 +162,19 @@ public class GUIs {
 		List<String> lore = new ArrayList<>();
 		
 		int sum = level.getLootWeights().values().stream().mapToInt(i -> i).sum();
+		System.out.println(sum);
 		
 		lore.add("§7§lLoot:");
-		level.getLootWeights().forEach((mat, w) -> {
-			BigDecimal d = BigDecimal.valueOf(w)
-					.divide(BigDecimal.valueOf(sum))
+		
+		List<Map.Entry<String, Integer>> entries = new ArrayList<>(level.getLootWeights().entrySet());
+		Collections.sort(entries, Comparator.comparingInt((Map.Entry<String, Integer> en) -> en.getValue()).reversed());
+		entries.forEach(en -> {
+			BigDecimal d = BigDecimal.valueOf(en.getValue())
 					.multiply(BigDecimal.valueOf(100))
+					.divide(BigDecimal.valueOf(sum), 5, RoundingMode.HALF_UP)
 					.setScale(2, RoundingMode.HALF_UP);
 			
-			lore.add("§8" + materialName(mat) + " - " + d.toString() + "%");
+			lore.add("§8" + materialName(en.getKey()) + " - " + d.toString() + "%");
 		});
 		
 		if(locked) {
@@ -170,13 +188,14 @@ public class GUIs {
 			lore.add("§2Active");
 		}
 		
+		m.setLore(lore);
 		it.setItemMeta(m);
 		
 		return it;
 	}
 	
-	private static String materialName(Material m) {
-		String s = m.name().replace('_', ' ').toLowerCase();
+	private static String materialName(String m) {
+		String s = m.replace('_', ' ').toLowerCase();
 		s = Character.toUpperCase(s.charAt(0)) + s.substring(1);
 		return s;
 	}

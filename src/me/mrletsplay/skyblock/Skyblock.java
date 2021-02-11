@@ -1,13 +1,17 @@
 package me.mrletsplay.skyblock;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -16,18 +20,19 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.skyblock.command.CommandComposter;
 import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
 import me.mrletsplay.skyblock.composter.ComposterEvents;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.level.Level;
+import world.bentobox.bentobox.api.addons.Addon;
 
 public class Skyblock extends JavaPlugin {
 	
 	public static List<NamespacedKey> recipes;
 	
-	private static Level levelAddon;
+	private static Addon levelAddon;
 
 	@Override
 	public void onEnable() {
@@ -161,10 +166,19 @@ public class Skyblock extends JavaPlugin {
 		return Skyblock.getPlugin(Skyblock.class);
 	}
 	
-	public static Level getLevelAddon() {
+	public static Addon getLevelAddon() {
 		if(levelAddon == null) 
-			levelAddon = (Level) BentoBox.getInstance().getAddonsManager().getAddonByName("Level").get();
+			levelAddon = BentoBox.getInstance().getAddonsManager().getAddonByName("Level").get();
 		return levelAddon;
+	}
+	
+	public static long getIslandLevel(World world, UUID uuid) {
+		try {
+			Method m = getLevelAddon().getClass().getMethod("getIslandLevel", World.class, UUID.class);
+			return (long) m.invoke(levelAddon, world, uuid);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new FriendlyException(e);
+		}
 	}
 	
 }

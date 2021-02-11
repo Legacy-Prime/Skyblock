@@ -36,14 +36,17 @@ public class ComposterConfig {
 		for(String k : config.getKeys("output", false, false)) {
 			int l = Integer.parseInt(k);
 			
-			Map<Material, Integer> loot = new HashMap<>();
-			for(String m : config.getKeys("output.loot." + k)) {
-				Material mat = Material.valueOf(m);
-				if(mat == null) {
-					Skyblock.getPlugin().getLogger().severe("Invalid material in config: " + m);
-					continue;
+			Map<String, Integer> loot = new HashMap<>();
+			for(String m : config.getKeys("output." + k + ".loot")) {
+				if(!m.equalsIgnoreCase("flower")) {
+					Material mat = Material.valueOf(m.toUpperCase());
+					if(mat == null) {
+						Skyblock.getPlugin().getLogger().severe("Invalid material in config: " + m);
+						continue;
+					}
 				}
-				loot.put(mat, config.getInt("output." + k + ".loot." + m));
+				
+				loot.put(m, config.getInt("output." + k + ".loot." + m));
 			}
 			
 			ls.add(new ComposterLevel(l, config.getInt("output." + k + ".required-island-level"), loot));

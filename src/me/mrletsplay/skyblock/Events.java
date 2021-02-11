@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -75,12 +74,6 @@ public class Events implements Listener {
 			event.setCancelled(true);
 			event.getPlayer().openInventory(GUIs.getGrinderGUI(event.getPlayer(), event.getClickedBlock().getLocation()));
 		}
-	}
-	
-	@EventHandler
-	public void onHarvest(PlayerHarvestBlockEvent event) {
-		System.out.println("HARVEST");
-		System.out.println(event.getHarvestedBlock());
 	}
 	
 }

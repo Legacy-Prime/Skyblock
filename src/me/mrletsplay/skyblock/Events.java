@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
+import me.mrletsplay.skyblock.blockbreaker.BlockBreaker;
 import me.mrletsplay.skyblock.grinder.Grinder;
 
 public class Events implements Listener {
@@ -40,6 +41,16 @@ public class Events implements Listener {
 			event.setDropItems(false);
 			event.setExpToDrop(0);
 			if(m == CustomMaterial.GRINDER) Grinder.breakGrinder(event.getBlock().getLocation());
+			switch (m) {
+				case GRINDER:
+					Grinder.breakGrinder(event.getBlock().getLocation());
+					break;
+				case BLOCK_BREAKER:
+					BlockBreaker.breakBlockBreaker(event.getBlock().getLocation());
+					break;
+				default:
+					break;
+			}
 			if(event.getPlayer().getGameMode() != GameMode.CREATIVE) event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), m.createItem(1));
 		}
 		
@@ -65,7 +76,7 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		Skyblock.recipes.forEach(r -> event.getPlayer().discoverRecipe(r));
+		Recipes.getRecipes().forEach(r -> event.getPlayer().discoverRecipe(r));
 	}
 	
 }

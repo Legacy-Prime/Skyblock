@@ -63,11 +63,11 @@ public class MetadataStore {
 	}
 	
 	private static String locToString(Location loc) {
-		return loc.getWorld().getName() + "-" + loc.getBlockX() + "-" + loc.getBlockY() + "-" + loc.getBlockZ();
+		return loc.getWorld().getName() + "~" + loc.getBlockX() + "~" + loc.getBlockY() + "~" + loc.getBlockZ();
 	}
 	
 	private static Location stringToLoc(String str) {
-		String[] s = str.split("-");
+		String[] s = str.split("~");
 		return new Location(Bukkit.getWorld(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]), Integer.parseInt(s[3]));
 	}
 

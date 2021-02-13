@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import me.mrletsplay.skyblock.CustomMaterial;
+import me.mrletsplay.skyblock.GUIs;
 import me.mrletsplay.skyblock.MetadataStore;
 
 public class Grinder {
@@ -37,6 +39,70 @@ public class Grinder {
 		if(input != null && input.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, input);
 		if(output != null && output.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, output);
 		if(fuel != null && fuel.getType() != Material.AIR) grinder.getWorld().dropItemNaturally(grinder, fuel);
+	}
+	
+	public static void runGrinders() {
+		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.GRINDER.name())) {
+			ItemStack i = MetadataStore.getMetadata(l, "grinder_item", ItemStack.class);
+			if(i != null && Grinder.GRINDABLE_MATERIALS.containsKey(i.getType())) {
+				int fuelLevel = MetadataStore.getMetadataOrDefault(l, "grinder_fuel_level", Integer.class, 0);
+				if(fuelLevel <= 0) {
+					ItemStack f = MetadataStore.getMetadata(l, "grinder_fuel", ItemStack.class);
+					if(f != null && Grinder.BURNABLE_ITEMS.containsKey(f.getType())) {
+						int fuel = Grinder.BURNABLE_ITEMS.get(f.getType());
+						fuelLevel = fuel;
+						MetadataStore.setMetadata(l, "grinder_fuel_level", fuel);
+						MetadataStore.setMetadata(l, "grinder_fuel_level_max", fuel);
+						
+						if(f.getAmount() <= 1) {
+							f = null;
+						}else {
+							f.setAmount(f.getAmount() - 1);
+						}
+						
+						MetadataStore.setMetadata(l, "grinder_fuel", f);
+					}
+				}
+				
+				if(fuelLevel > 0) {
+					int p = MetadataStore.getMetadataOrDefault(l, "grinder_progress", Integer.class, 0) + 4;
+					if(p >= 64) {
+						// TODO: Produce item
+						ItemStack out = Grinder.GRINDABLE_MATERIALS.get(i.getType());
+						
+						ItemStack output = MetadataStore.getMetadata(l, "grinder_output", ItemStack.class);
+						
+						if(output == null || output.getType() == Material.AIR) {
+							output = out;
+						}else if(output.getType() == out.getType() && (output.getAmount() + out.getAmount() <= output.getMaxStackSize())) {
+							output.setAmount(output.getAmount() + out.getAmount());
+						}else {
+							continue; // Something is blocking the output slot. Wait for it to be removed
+						}
+						
+						MetadataStore.setMetadata(l, "grinder_output", output);
+
+						if(i.getAmount() <= 1) {
+							i = null;
+						}else {
+							i.setAmount(i.getAmount() - 1);
+						}
+						
+						MetadataStore.setMetadata(l, "grinder_item", i);
+						
+						p = 0;
+					}
+					
+					MetadataStore.setMetadata(l, "grinder_fuel_level", fuelLevel - 1);
+					MetadataStore.setMetadata(l, "grinder_progress", p);
+					continue;
+				}
+			}
+			
+			MetadataStore.setMetadata(l, "grinder_progress", 0);
+		}
+		
+		GUIs.GRINDER.refreshAllInstances();
 	}
 	
 }

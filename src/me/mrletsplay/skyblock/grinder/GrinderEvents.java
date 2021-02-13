@@ -1,6 +1,7 @@
 package me.mrletsplay.skyblock.grinder;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -17,7 +18,8 @@ public class GrinderEvents implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		CustomMaterial m;
-		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && !event.getPlayer().isSneaking() && (m = MaterialManager.getType(event.getClickedBlock())) != null && m == CustomMaterial.GRINDER) {
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (m = MaterialManager.getType(event.getClickedBlock())) != null && m == CustomMaterial.GRINDER) {
+			if(event.getPlayer().isSneaking() && event.getItem() != null && event.getItem().getType() != Material.AIR) return;
 			event.setCancelled(true);
 			event.getPlayer().openInventory(GUIs.getGrinderGUI(event.getPlayer(), event.getClickedBlock().getLocation()));
 		}

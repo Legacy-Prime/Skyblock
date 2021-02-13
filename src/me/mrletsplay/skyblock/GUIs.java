@@ -25,6 +25,7 @@ import me.mrletsplay.mrcore.bukkitimpl.ItemUtils;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUI;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUIBuilder;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUIElement;
+import me.mrletsplay.mrcore.bukkitimpl.gui.StaticGUIElement;
 import me.mrletsplay.mrcore.bukkitimpl.gui.event.GUIBuildEvent;
 import me.mrletsplay.mrcore.bukkitimpl.versioned.VersionedMaterial;
 import me.mrletsplay.skyblock.composter.Composter;
@@ -35,7 +36,8 @@ public class GUIs {
 	
 	public static GUI
 		GRINDER,
-		COMPOSTER_SELECT;
+		COMPOSTER_SELECT,
+		BLOCK_BREAKER;
 	
 	static {
 		loadGUIs();
@@ -44,6 +46,7 @@ public class GUIs {
 	public static void loadGUIs() {
 		GRINDER = buildGrinderGUI();
 		COMPOSTER_SELECT = buildComposterSelectGUI();
+		BLOCK_BREAKER = buildBlockBreakerGUI();
 	}
 	
 	private static GUI buildGrinderGUI() {
@@ -199,10 +202,52 @@ public class GUIs {
 		return s;
 	}
 	
+	private static GUI buildBlockBreakerGUI() {
+		GUIBuilder b = new GUIBuilder("§6Block Breaker", 3);
+		
+		for(int i = 0; i < 3 * 9; i++) {
+			b.addElement(i, new StaticGUIElement(ItemUtils.createItem(VersionedMaterial.BLACK_STAINED_GLASS_PANE, 1, "§0")));
+		}
+		
+		b.addElement(13, new GUIElement() {
+			
+			@Override
+			public ItemStack getItem(GUIBuildEvent event) {
+				Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
+				return MetadataStore.getMetadata(blockBreaker, "block_breaker_upgrade", ItemStack.class);
+			}
+		});
+		
+		b.setDragDropListener(event -> {
+			event.setCancelled(false);
+		});
+		
+		b.setActionListener(event -> {
+			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
+					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL
+					&& event.getEvent().getAction() != InventoryAction.SWAP_WITH_CURSOR) return;
+			
+			if(event.getEvent().getSlot() == 13) {
+				Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
+				MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getItemClickedWith());
+				
+				event.setCancelled(false);
+			}
+		});
+		
+		return b.create();
+	}
+	
 	public static Inventory getGrinderGUI(Player p, Location grinder) {
 		Map<String, Object> props = new HashMap<>();
 		props.put("grinder_location", grinder);
 		return GRINDER.getForPlayer(p, Skyblock.getPlugin(), props);
+	}
+	
+	public static Inventory getBlockBreakerGUI(Player p, Location blockBreaker) {
+		Map<String, Object> props = new HashMap<>();
+		props.put("block_breaker_location", blockBreaker);
+		return BLOCK_BREAKER.getForPlayer(p, Skyblock.getPlugin(), props);
 	}
 	
 	public static Inventory getComposterSelectGUI(Player p) {

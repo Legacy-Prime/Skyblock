@@ -13,9 +13,11 @@ import me.mrletsplay.mrcore.misc.FriendlyException;
 import me.mrletsplay.skyblock.blockbreaker.BlockBreaker;
 import me.mrletsplay.skyblock.blockbreaker.BlockBreakerEvents;
 import me.mrletsplay.skyblock.command.CommandBiomes;
+import me.mrletsplay.skyblock.command.CommandChallenges;
 import me.mrletsplay.skyblock.command.CommandComposter;
 import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
+import me.mrletsplay.skyblock.command.CommandLevel;
 import me.mrletsplay.skyblock.composter.ComposterEvents;
 import me.mrletsplay.skyblock.grinder.Grinder;
 import me.mrletsplay.skyblock.grinder.GrinderEvents;
@@ -39,6 +41,12 @@ public class Skyblock extends JavaPlugin {
 		
 		PluginCommand bi = getCommand("biomes");
 		bi.setExecutor(new CommandBiomes(bi));
+		
+		PluginCommand lv = getCommand("level");
+		lv.setExecutor(new CommandLevel(lv));
+		
+		PluginCommand ch = getCommand("challenges");
+		ch.setExecutor(new CommandChallenges(ch));
 		
 		Recipes.registerRecipes();
 		

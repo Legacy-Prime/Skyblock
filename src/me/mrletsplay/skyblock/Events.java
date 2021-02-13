@@ -19,7 +19,9 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onHoe(PlayerInteractEvent event) {
-		if(event.getItem() != null && event.getItem().getType().name().endsWith("_HOE")
+		if(event.getItem() != null
+				&& event.getItem().getType().name().endsWith("_HOE")
+				&& event.getClickedBlock() != null
 				&& event.getClickedBlock().getType() == Material.COARSE_DIRT) {
 			event.getClickedBlock().getWorld().dropItemNaturally(event.getClickedBlock().getLocation(), new ItemStack(Material.GRAVEL));
 		}

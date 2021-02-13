@@ -10,3 +10,7 @@ commands:
   composter:
   generator:
   biomes:
+  level:
+  challenges:
+  visit:
+  visit-settings:

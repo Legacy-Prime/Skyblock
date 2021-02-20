@@ -2,9 +2,11 @@ package me.mrletsplay.skyblock;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -21,8 +23,11 @@ public class Events implements Listener {
 	public void onHoe(PlayerInteractEvent event) {
 		if(event.getItem() != null
 				&& event.getItem().getType().name().endsWith("_HOE")
+				&& event.getAction() == Action.RIGHT_CLICK_BLOCK
 				&& event.getClickedBlock() != null
-				&& event.getClickedBlock().getType() == Material.COARSE_DIRT) {
+				&& event.getClickedBlock().getType() == Material.COARSE_DIRT
+				&& (event.getClickedBlock().getRelative(BlockFace.UP) == null
+				|| event.getClickedBlock().getRelative(BlockFace.UP).getType() == Material.AIR)) {
 			event.getClickedBlock().getWorld().dropItemNaturally(event.getClickedBlock().getLocation(), new ItemStack(Material.GRAVEL));
 		}
 	}

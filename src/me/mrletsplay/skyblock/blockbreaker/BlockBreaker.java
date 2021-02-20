@@ -22,6 +22,7 @@ public class BlockBreaker {
 	public static void runBlockBreakers() {
 		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.BLOCK_BREAKER.name())) {
 			if(!l.getChunk().isLoaded()) continue;
+			if(l.getBlock().getBlockPower() > 0) continue;
 			Dispenser d = (Dispenser) l.getBlock().getBlockData();
 			BlockFace f = d.getFacing();
 			Location toBreak = l.clone().add(f.getModX(), f.getModY(), f.getModZ());

@@ -107,6 +107,28 @@ public class GUIs {
 			event.setCancelled(false);
 		});
 		
+//		b.setPutItemListener(event -> {
+//			if(event.getSlot() != 10 && event.getSlot() != 28) return;
+//			System.out.println("PUT");
+//			event.setCancelled(false);
+//			event.setCallback(() -> {
+//				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
+//				MetadataStore.setMetadata(grinder, event.getSlot() == 10 ? "grinder_item" : "grinder_fuel", event.getSlotAfter());
+//				GRINDER.refreshAllInstances();
+//			});
+//		});
+//		
+//		b.setTakeItemListener(event -> {
+//			if(event.getSlot() != 10 && event.getSlot() != 28) return;
+//			System.out.println("TAKE");
+//			event.setCancelled(false);
+//			event.setCallback(() -> {
+//				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
+//				MetadataStore.setMetadata(grinder, event.getSlot() == 10 ? "grinder_item" : "grinder_fuel", null);
+//				GRINDER.refreshAllInstances();
+//			});
+//		});
+		
 		b.setActionListener(event -> {
 			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
 					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL

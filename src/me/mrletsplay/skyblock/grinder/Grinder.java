@@ -28,6 +28,7 @@ public class Grinder {
 		GRINDABLE_MATERIALS.put(Material.EMERALD_ORE, new ItemStack(Material.EMERALD, 1));
 		
 		BURNABLE_ITEMS.put(Material.COAL, 40);
+		BURNABLE_ITEMS.put(Material.COAL_BLOCK, 40 * 9);
 		BURNABLE_ITEMS.put(Material.CHARCOAL, 40);
 	}
 	

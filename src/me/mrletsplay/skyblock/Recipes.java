@@ -65,6 +65,10 @@ public class Recipes {
 				.setIngredient('D', Material.DIAMOND_BLOCK)
 				.setIngredient('O', Material.OBSIDIAN)
 				.setIngredient('W', new MaterialChoice(Material.ACACIA_PLANKS, Material.BIRCH_PLANKS, Material.CRIMSON_PLANKS, Material.DARK_OAK_PLANKS, Material.JUNGLE_PLANKS, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.WARPED_PLANKS)));
+		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("soul_soil"), new ItemStack(Material.SOUL_SOIL, 1))
+				.shape("SS", "SS")
+				.setIngredient('S', Material.SOUL_SAND));
 	}
 	
 	private static NamespacedKey createRecipeKey(String key) {

@@ -47,7 +47,6 @@ public class Events implements Listener {
 		if((m = MaterialManager.getType(event.getBlock())) != null) {
 			event.setDropItems(false);
 			event.setExpToDrop(0);
-			if(m == CustomMaterial.GRINDER) Grinder.breakGrinder(event.getBlock().getLocation());
 			switch (m) {
 				case GRINDER:
 					Grinder.breakGrinder(event.getBlock().getLocation());

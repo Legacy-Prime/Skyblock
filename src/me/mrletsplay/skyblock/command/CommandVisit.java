@@ -21,7 +21,7 @@ public class CommandVisit extends BukkitCommand {
 			return;
 		}
 		
-		Bukkit.dispatchCommand(((BukkitCommandSender) event.getSender()).getBukkitSender(), "is visit " + event.getArguments()[0]);
+		Bukkit.dispatchCommand(((BukkitCommandSender) event.getSender()).getBukkitSender(), "is warp " + event.getArguments()[0]);
 	}
 	
 }

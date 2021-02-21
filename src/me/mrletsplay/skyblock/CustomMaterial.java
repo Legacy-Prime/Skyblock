@@ -1,40 +1,51 @@
 package me.mrletsplay.skyblock;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public enum CustomMaterial {
 
-	GRINDER(Material.FURNACE, "Grinder", "Grinds materials"),
-	BLOCK_BREAKER(Material.DISPENSER, "Block Breaker", "Breaks blocks");
+	GRINDER(Material.FURNACE, "§6Grinder", "§fGrinds materials"),
+	BLOCK_BREAKER(Material.DISPENSER, "§6Block Breaker", "§fBreaks blocks"),
 	
-	private final Material itemMaterial;
+	// Basic spawners
+	ZOMBIE_SPAWNER(ItemHelper.spawner(EntityType.ZOMBIE, "§bZombie Spawner", "§fSpawns Zombies"), Material.SPAWNER),
+	SKELETON_SPAWNER(ItemHelper.spawner(EntityType.SKELETON, "§bSkeleton Spawner", "§fSpawns Skeleton"), Material.SPAWNER),
+	SPIDER_SPAWNER(ItemHelper.spawner(EntityType.SPIDER, "§bSpider Spawner", "§fSpawns Spiders"), Material.SPAWNER),
+	CREEPER_SPAWNER(ItemHelper.spawner(EntityType.CREEPER, "§bCreeper Spawner", "§fSpawns Creeper"), Material.SPAWNER),
+	
+	// End game spawners
+	BLAZE_SPAWNER(ItemHelper.spawner(EntityType.BLAZE, "§5Blaze Spawner", "§fSpawns Blazes"), Material.SPAWNER),
+	ENDERMAN_SPAWNER(ItemHelper.spawner(EntityType.ENDERMAN, "§5Enderman Spawner", "§fSpawns Endermen"), Material.SPAWNER),
+	;
+	
+	private final ItemStack item;
 	private final Material blockMaterial;
-	private final String name;
-	private final String description;
 	
-	private CustomMaterial(Material itemMaterial, Material blockMaterial, String name, String description) {
-		this.itemMaterial = itemMaterial;
+	private CustomMaterial(Material itemMaterial, String name, String description, Material blockMaterial) {
+		this.item = new ItemStack(itemMaterial);
+		ItemMeta m = item.getItemMeta();
+		m.setDisplayName(name);
+		m.setLore(Arrays.asList(description.split("\n")));
 		this.blockMaterial = blockMaterial;
-		this.name = name;
-		this.description = description;
 	}
 	
 	private CustomMaterial(Material material, String name, String description) {
-		this(material, material, name, description);
+		this(material, name, description, material);
+	}
+	
+	private CustomMaterial(ItemStack item, Material blockMaterial) {
+		this.item = item;
+		this.blockMaterial = blockMaterial;
 	}
 	
 	public ItemStack createItem(int amount) {
-		ItemStack it = new ItemStack(itemMaterial);
-		ItemMeta m = it.getItemMeta();
-		m.setDisplayName("§6" + name);
-		m.setLore(Arrays.stream(description.split("\n")).map(s -> "§f" + s).collect(Collectors.toList()));
-		it.setItemMeta(m);
+		ItemStack it = item.clone();
 		MaterialManager.applyType(it, this);
 		return it;
 	}
@@ -42,10 +53,6 @@ public enum CustomMaterial {
 	public void placeBlock(Location loc) {
 		loc.getBlock().setType(blockMaterial);
 		MaterialManager.applyType(loc.getBlock(), this);
-	}
-	
-	public Material getItemMaterial() {
-		return itemMaterial;
 	}
 	
 	public Material getBlockMaterial() {

@@ -18,13 +18,15 @@ import me.mrletsplay.skyblock.MetadataStore;
 public class BlockBreaker {
 	
 	private static final EnumSet<Material> UNBREAKABLE_BLOCKS = EnumSet.of(Material.BEDROCK, Material.PISTON_HEAD, Material.MOVING_PISTON);
+	private static final EnumSet<BlockFace> FACES = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
+	
 	
 	public static void runBlockBreakers() {
 		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.BLOCK_BREAKER.name())) {
 			if(!l.getChunk().isLoaded()) continue;
-			if(l.getBlock().getBlockPower() > 0) continue;
 			Dispenser d = (Dispenser) l.getBlock().getBlockData();
 			BlockFace f = d.getFacing();
+			if(FACES.stream().anyMatch(fc -> fc != f && l.getBlock().getBlockPower(fc) > 0)) continue;
 			Location toBreak = l.clone().add(f.getModX(), f.getModY(), f.getModZ());
 			if(toBreak.getBlock() != null
 					&& !toBreak.getBlock().isEmpty()

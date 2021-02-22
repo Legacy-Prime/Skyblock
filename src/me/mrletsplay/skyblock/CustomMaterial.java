@@ -32,6 +32,7 @@ public enum CustomMaterial {
 		ItemMeta m = item.getItemMeta();
 		m.setDisplayName(name);
 		m.setLore(Arrays.asList(description.split("\n")));
+		item.setItemMeta(m);
 		this.blockMaterial = blockMaterial;
 	}
 	

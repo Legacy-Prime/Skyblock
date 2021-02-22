@@ -103,49 +103,36 @@ public class GUIs {
 			}
 		});
 		
-		b.setDragDropListener(event -> {
+		b.setPutItemListener(event -> {
+			if(event.getSlot() != 10 && event.getSlot() != 28) return;
 			event.setCancelled(false);
+			event.setCallback(() -> {
+				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
+				MetadataStore.setMetadata(grinder, event.getSlot() == 10 ? "grinder_item" : "grinder_fuel", event.getSlotAfter());
+				GRINDER.refreshAllInstances();
+			});
 		});
 		
-//		b.setPutItemListener(event -> {
-//			if(event.getSlot() != 10 && event.getSlot() != 28) return;
-//			System.out.println("PUT");
-//			event.setCancelled(false);
-//			event.setCallback(() -> {
-//				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
-//				MetadataStore.setMetadata(grinder, event.getSlot() == 10 ? "grinder_item" : "grinder_fuel", event.getSlotAfter());
-//				GRINDER.refreshAllInstances();
-//			});
-//		});
-//		
-//		b.setTakeItemListener(event -> {
-//			if(event.getSlot() != 10 && event.getSlot() != 28) return;
-//			System.out.println("TAKE");
-//			event.setCancelled(false);
-//			event.setCallback(() -> {
-//				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
-//				MetadataStore.setMetadata(grinder, event.getSlot() == 10 ? "grinder_item" : "grinder_fuel", null);
-//				GRINDER.refreshAllInstances();
-//			});
-//		});
-		
-		b.setActionListener(event -> {
-			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
-					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL
-					&& event.getEvent().getAction() != InventoryAction.SWAP_WITH_CURSOR) return;
-			
-			if(event.getEvent().getSlot() == 10 || event.getEvent().getSlot() == 28) {
+		b.setTakeItemListener(event -> {
+			if(event.getSlot() != 10 && event.getSlot() != 28 && event.getSlot() != 24) return;
+			event.setCancelled(false);
+			event.setCallback(() -> {
 				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
-				MetadataStore.setMetadata(grinder, event.getEvent().getSlot() == 10 ? "grinder_item" : "grinder_fuel", event.getItemClickedWith());
-				
-				event.setCancelled(false);
-			}
-			
-			if(event.getEvent().getSlot() == 24 && event.getEvent().getAction() == InventoryAction.PICKUP_ALL) {
-				Location grinder = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "grinder_location");
-				MetadataStore.setMetadata(grinder, "grinder_output", null);
-				event.setCancelled(false);
-			}
+				String slot = null;
+				switch(event.getSlot()) {
+					case 10:
+						slot = "grinder_item";
+						break;
+					case 28:
+						slot = "grinder_fuel";
+						break;
+					case 24:
+						slot = "grinder_output";
+						break;
+				}
+				MetadataStore.setMetadata(grinder, slot, event.getSlotAfter());
+				GRINDER.refreshAllInstances();
+			});
 		});
 		
 		return b.create();
@@ -240,22 +227,42 @@ public class GUIs {
 			}
 		});
 		
-		b.setDragDropListener(event -> {
-			event.setCancelled(false);
-		});
-		
-		b.setActionListener(event -> {
-			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
-					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL
-					&& event.getEvent().getAction() != InventoryAction.SWAP_WITH_CURSOR) return;
-			
-			if(event.getEvent().getSlot() == 13) {
-				Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
-				MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getItemClickedWith());
-				
+		b.setTakeItemListener(event -> {
+			if(event.getSlot() == 13) {
+				event.setCallback(() -> {
+					Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
+					MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getSlotAfter());
+				});
 				event.setCancelled(false);
 			}
 		});
+		
+		b.setPutItemListener(event -> {
+			if(event.getSlot() == 13) {
+				event.setCallback(() -> {
+					Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
+					MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getSlotAfter());
+				});
+				event.setCancelled(false);
+			}
+		});
+		
+//		b.setDragDropListener(event -> {
+//			event.setCancelled(false);
+//		});
+		
+//		b.setActionListener(event -> {
+//			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
+//					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL
+//					&& event.getEvent().getAction() != InventoryAction.SWAP_WITH_CURSOR) return;
+//			
+//			if(event.getEvent().getSlot() == 13) {
+//				Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
+//				MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getItemClickedWith());
+//				
+//				event.setCancelled(false);
+//			}
+//		});
 		
 		return b.create();
 	}

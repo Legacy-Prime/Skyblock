@@ -69,6 +69,17 @@ public class Recipes {
 		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("soul_soil"), new ItemStack(Material.SOUL_SOIL, 1))
 				.shape("SS", "SS")
 				.setIngredient('S', Material.SOUL_SAND));
+		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("elytra"), new ItemStack(Material.ELYTRA))
+				.shape("L L", "NSN", "L L")
+				.setIngredient('L', Material.LEATHER)
+				.setIngredient('N', Material.NETHER_STAR)
+				.setIngredient('S', Material.STICK));
+		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("end_stone"), new ItemStack(Material.END_STONE, 2))
+				.shape("SQ", "QS")
+				.setIngredient('S', Material.SMOOTH_STONE)
+				.setIngredient('Q', Material.QUARTZ_BLOCK));
 	}
 	
 	private static NamespacedKey createRecipeKey(String key) {

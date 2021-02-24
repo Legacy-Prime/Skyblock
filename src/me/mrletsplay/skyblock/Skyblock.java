@@ -18,6 +18,7 @@ import me.mrletsplay.skyblock.command.CommandComposter;
 import me.mrletsplay.skyblock.command.CommandGenerator;
 import me.mrletsplay.skyblock.command.CommandLPSkyblock;
 import me.mrletsplay.skyblock.command.CommandLevel;
+import me.mrletsplay.skyblock.command.CommandVisit;
 import me.mrletsplay.skyblock.composter.ComposterEvents;
 import me.mrletsplay.skyblock.grinder.Grinder;
 import me.mrletsplay.skyblock.grinder.GrinderEvents;
@@ -47,6 +48,9 @@ public class Skyblock extends JavaPlugin {
 		
 		PluginCommand ch = getCommand("challenges");
 		ch.setExecutor(new CommandChallenges(ch));
+		
+		PluginCommand vs = getCommand("visit");
+		vs.setExecutor(new CommandVisit(vs));
 		
 		Recipes.registerRecipes();
 		

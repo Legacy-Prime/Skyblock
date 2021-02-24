@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.data.type.Dispenser;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,12 +42,16 @@ public class Events implements Listener {
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		if(event.getBlock().getState() instanceof CreatureSpawner && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+			// TODO: use custom spawner types instead
+			ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
+			if(tool == null || !tool.containsEnchantment(Enchantment.SILK_TOUCH)) return;
 			event.setExpToDrop(0);
 			ItemStack i = new ItemStack(Material.SPAWNER);
 			BlockStateMeta m = (BlockStateMeta) i.getItemMeta();
 			m.setBlockState(event.getBlock().getState());
 			i.setItemMeta(m);
 			event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), i);
+			return;
 		}
 		
 		CustomMaterial m;

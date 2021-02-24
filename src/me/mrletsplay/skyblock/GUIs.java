@@ -148,15 +148,16 @@ public class GUIs {
 				public ItemStack getItem(GUIBuildEvent event) {
 					Player p = event.getPlayer();
 					UUID ownerID = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId()).getOwner();
-					long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
+					long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), ownerID);
 					return createIcon(l, iL < l.getRequiredIslandLevel(), PlayerDataStore.getDataOrElse(ownerID, "composter", Integer.class, 1) == l.getLevel());
 				}
 			}.setAction(event -> {
 				Player p = event.getPlayer();
-				long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), p.getUniqueId());
-				if(iL < l.getRequiredIslandLevel()) return;
 				
 				UUID ownerID = BentoBox.getInstance().getIslands().getIsland(Bukkit.getWorld("bskyblock_world"), p.getUniqueId()).getOwner();
+				long iL = Skyblock.getIslandLevel(Bukkit.getWorld("bskyblock_world"), ownerID);
+				if(iL < l.getRequiredIslandLevel()) return;
+				
 				PlayerDataStore.setData(ownerID, "composter", l.getLevel());
 				
 				COMPOSTER_SELECT.refreshAllInstances();

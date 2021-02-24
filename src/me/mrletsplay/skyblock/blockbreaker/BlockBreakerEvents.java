@@ -32,7 +32,7 @@ public class BlockBreakerEvents implements Listener {
 	@EventHandler
 	public void onHopper(InventoryMoveItemEvent event) {
 		if((event.getSource().getLocation() != null && MaterialManager.getType(event.getSource().getLocation().getBlock()) == CustomMaterial.BLOCK_BREAKER)
-				|| (event.getDestination().getLocation() != null && MaterialManager.getType(event.getSource().getLocation().getBlock()) == CustomMaterial.BLOCK_BREAKER)) {
+				|| (event.getDestination().getLocation() != null && MaterialManager.getType(event.getDestination().getLocation().getBlock()) == CustomMaterial.BLOCK_BREAKER)) {
 			event.setCancelled(true);
 		}
 	}

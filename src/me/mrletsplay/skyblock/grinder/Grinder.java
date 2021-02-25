@@ -7,14 +7,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 import me.mrletsplay.skyblock.CustomMaterial;
 import me.mrletsplay.skyblock.GUIs;
 import me.mrletsplay.skyblock.MetadataStore;
+import me.mrletsplay.skyblock.Skyblock;
 
 public class Grinder {
 	
 	public static final Map<Material, ItemStack> GRINDABLE_MATERIALS = new HashMap<>();
 	public static final Map<Material, Integer> BURNABLE_ITEMS = new HashMap<>();
+	private static final Timing TIMING = Timings.of(Skyblock.getPlugin(), "runGrinders");
 	
 	static {
 		GRINDABLE_MATERIALS.put(Material.COBBLESTONE, new ItemStack(Material.SAND));
@@ -43,6 +47,7 @@ public class Grinder {
 	}
 	
 	public static void runGrinders() {
+		TIMING.startTiming();
 		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.GRINDER.name())) {
 			ItemStack i = MetadataStore.getMetadata(l, "grinder_item", ItemStack.class);
 			if(i != null && Grinder.GRINDABLE_MATERIALS.containsKey(i.getType())) {
@@ -99,11 +104,12 @@ public class Grinder {
 					continue;
 				}
 			}
-			
-			MetadataStore.setMetadata(l, "grinder_progress", 0);
+
+			if(MetadataStore.getMetadata(l, "grinder_progress", Integer.class) > 0) MetadataStore.setMetadata(l, "grinder_progress", 0);
 		}
 		
 		GUIs.GRINDER.refreshAllInstances();
+		TIMING.stopTiming();
 	}
 	
 }

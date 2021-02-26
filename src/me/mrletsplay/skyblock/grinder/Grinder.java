@@ -105,7 +105,7 @@ public class Grinder {
 				}
 			}
 
-			if(MetadataStore.getMetadata(l, "grinder_progress", Integer.class) > 0) MetadataStore.setMetadata(l, "grinder_progress", 0);
+			if(MetadataStore.getMetadataOrDefault(l, "grinder_progress", Integer.class, 0) > 0) MetadataStore.setMetadata(l, "grinder_progress", 0);
 		}
 		
 		GUIs.GRINDER.refreshAllInstances();

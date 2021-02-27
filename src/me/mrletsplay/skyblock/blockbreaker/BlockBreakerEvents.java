@@ -17,33 +17,48 @@ public class BlockBreakerEvents implements Listener {
 	
 	@EventHandler
 	public void onFailedDispense(BlockFailedDispenseEvent event) {
-		if(MaterialManager.getType(event.getBlock()) == CustomMaterial.BLOCK_BREAKER) {
+		CustomMaterial m = MaterialManager.getType(event.getBlock());
+		if(m == CustomMaterial.BLOCK_BREAKER || m == CustomMaterial.ADVANCED_BLOCK_BREAKER) {
 			event.shouldPlayEffect(false);
 		}
 	}
 	
 	@EventHandler
 	public void onDispense(BlockDispenseEvent event) {
-		if(MaterialManager.getType(event.getBlock()) == CustomMaterial.BLOCK_BREAKER) {
+		CustomMaterial m = MaterialManager.getType(event.getBlock());
+		if(m == CustomMaterial.BLOCK_BREAKER || m == CustomMaterial.ADVANCED_BLOCK_BREAKER) {
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler
 	public void onHopper(InventoryMoveItemEvent event) {
-		if((event.getSource().getLocation() != null && MaterialManager.getType(event.getSource().getLocation().getBlock()) == CustomMaterial.BLOCK_BREAKER)
-				|| (event.getDestination().getLocation() != null && MaterialManager.getType(event.getDestination().getLocation().getBlock()) == CustomMaterial.BLOCK_BREAKER)) {
-			event.setCancelled(true);
+		if(event.getSource().getLocation() != null) {
+			CustomMaterial m = MaterialManager.getType(event.getSource().getLocation().getBlock());
+			if(m == CustomMaterial.BLOCK_BREAKER || m == CustomMaterial.ADVANCED_BLOCK_BREAKER) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		if(event.getDestination().getLocation() != null) {
+			CustomMaterial m = MaterialManager.getType(event.getDestination().getLocation().getBlock());
+			if(m == CustomMaterial.BLOCK_BREAKER || m == CustomMaterial.ADVANCED_BLOCK_BREAKER) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 	}
 	
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		CustomMaterial m;
-		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && (m = MaterialManager.getType(event.getClickedBlock())) != null && m == CustomMaterial.BLOCK_BREAKER) {
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK
+				&& (m = MaterialManager.getType(event.getClickedBlock())) != null
+				&& (m == CustomMaterial.BLOCK_BREAKER || m == CustomMaterial.ADVANCED_BLOCK_BREAKER)) {
 			if(event.getPlayer().isSneaking() && event.getItem() != null && event.getItem().getType() != Material.AIR) return;
 			event.setCancelled(true);
-			event.getPlayer().openInventory(GUIs.getBlockBreakerGUI(event.getPlayer(), event.getClickedBlock().getLocation()));
+			event.getPlayer().openInventory(GUIs.getBlockBreakerGUI(event.getPlayer(), event.getClickedBlock().getLocation(), m == CustomMaterial.ADVANCED_BLOCK_BREAKER));
 		}
 	}
 

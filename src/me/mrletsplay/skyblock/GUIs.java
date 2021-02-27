@@ -37,7 +37,8 @@ public class GUIs {
 	public static GUI
 		GRINDER,
 		COMPOSTER_SELECT,
-		BLOCK_BREAKER;
+		BLOCK_BREAKER,
+		ADVANCED_BLOCK_BREAKER;
 	
 	static {
 		loadGUIs();
@@ -46,7 +47,8 @@ public class GUIs {
 	public static void loadGUIs() {
 		GRINDER = buildGrinderGUI();
 		COMPOSTER_SELECT = buildComposterSelectGUI();
-		BLOCK_BREAKER = buildBlockBreakerGUI();
+		BLOCK_BREAKER = buildBlockBreakerGUI("§6Block Breaker");
+		ADVANCED_BLOCK_BREAKER = buildBlockBreakerGUI("§5Advanced Block Breaker");
 	}
 	
 	private static GUI buildGrinderGUI() {
@@ -212,8 +214,8 @@ public class GUIs {
 		return s;
 	}
 	
-	private static GUI buildBlockBreakerGUI() {
-		GUIBuilder b = new GUIBuilder("§6Block Breaker", 3);
+	private static GUI buildBlockBreakerGUI(String name) {
+		GUIBuilder b = new GUIBuilder(name, 3);
 		
 		for(int i = 0; i < 3 * 9; i++) {
 			b.addElement(i, new StaticGUIElement(ItemUtils.createItem(VersionedMaterial.BLACK_STAINED_GLASS_PANE, 1, "§0")));
@@ -248,23 +250,6 @@ public class GUIs {
 			}
 		});
 		
-//		b.setDragDropListener(event -> {
-//			event.setCancelled(false);
-//		});
-		
-//		b.setActionListener(event -> {
-//			if(event.getEvent().getAction() != InventoryAction.PICKUP_ALL
-//					&& event.getEvent().getAction() != InventoryAction.PLACE_ALL
-//					&& event.getEvent().getAction() != InventoryAction.SWAP_WITH_CURSOR) return;
-//			
-//			if(event.getEvent().getSlot() == 13) {
-//				Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
-//				MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getItemClickedWith());
-//				
-//				event.setCancelled(false);
-//			}
-//		});
-		
 		return b.create();
 	}
 	
@@ -274,10 +259,10 @@ public class GUIs {
 		return GRINDER.getForPlayer(p, Skyblock.getPlugin(), props);
 	}
 	
-	public static Inventory getBlockBreakerGUI(Player p, Location blockBreaker) {
+	public static Inventory getBlockBreakerGUI(Player p, Location blockBreaker, boolean advanced) {
 		Map<String, Object> props = new HashMap<>();
 		props.put("block_breaker_location", blockBreaker);
-		return BLOCK_BREAKER.getForPlayer(p, Skyblock.getPlugin(), props);
+		return (advanced ? ADVANCED_BLOCK_BREAKER : BLOCK_BREAKER).getForPlayer(p, Skyblock.getPlugin(), props);
 	}
 	
 	public static Inventory getComposterSelectGUI(Player p) {

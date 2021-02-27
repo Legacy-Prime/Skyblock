@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.type.Furnace;
 import org.bukkit.inventory.ItemStack;
 
 import co.aikar.timings.Timing;
@@ -49,6 +50,11 @@ public class Grinder {
 	public static void runGrinders() {
 		TIMING.startTiming();
 		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.GRINDER.name())) {
+			if(!l.getChunk().isLoaded()) continue;
+			
+			Furnace furnace = (Furnace) l.getBlock().getBlockData();
+			furnace.setLit(false);
+			
 			ItemStack i = MetadataStore.getMetadata(l, "grinder_item", ItemStack.class);
 			if(i != null && Grinder.GRINDABLE_MATERIALS.containsKey(i.getType())) {
 				int fuelLevel = MetadataStore.getMetadataOrDefault(l, "grinder_fuel_level", Integer.class, 0);
@@ -71,6 +77,8 @@ public class Grinder {
 				}
 				
 				if(fuelLevel > 0) {
+					furnace.setLit(true);
+					
 					int p = MetadataStore.getMetadataOrDefault(l, "grinder_progress", Integer.class, 0) + 4;
 					if(p >= 64) {
 						// TODO: Produce item
@@ -101,9 +109,13 @@ public class Grinder {
 					
 					MetadataStore.setMetadata(l, "grinder_fuel_level", fuelLevel - 1);
 					MetadataStore.setMetadata(l, "grinder_progress", p);
+					
+					l.getBlock().setBlockData(furnace);
 					continue;
 				}
 			}
+			
+			l.getBlock().setBlockData(furnace);
 
 			if(MetadataStore.getMetadataOrDefault(l, "grinder_progress", Integer.class, 0) > 0) MetadataStore.setMetadata(l, "grinder_progress", 0);
 		}

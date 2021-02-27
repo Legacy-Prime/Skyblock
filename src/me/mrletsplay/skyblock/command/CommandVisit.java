@@ -11,7 +11,7 @@ public class CommandVisit extends BukkitCommand {
 	
 	public CommandVisit(PluginCommand c) {
 		super(c);
-		setDescription("Visit");
+		setDescription("Visit another player's island");
 		setUsage("/visit <player>");
 	}
 	

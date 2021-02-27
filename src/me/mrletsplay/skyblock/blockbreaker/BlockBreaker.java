@@ -1,6 +1,7 @@
 package me.mrletsplay.skyblock.blockbreaker;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,14 +21,25 @@ import me.mrletsplay.skyblock.Skyblock;
 
 public class BlockBreaker {
 	
-	private static final EnumSet<Material> UNBREAKABLE_BLOCKS = EnumSet.of(Material.BEDROCK, Material.PISTON_HEAD, Material.MOVING_PISTON);
+	private static final EnumSet<Material> UNBREAKABLE_BLOCKS = EnumSet.of(Material.BEDROCK, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.END_PORTAL_FRAME, Material.END_PORTAL);
+	private static final EnumSet<Material> BASIC_DISALLOWED_BLOCKS = EnumSet.of(Material.COAL_BLOCK, Material.IRON_BLOCK, Material.GOLD_BLOCK, Material.LAPIS_BLOCK, Material.DIAMOND_BLOCK, Material.SOUL_SAND, Material.NETHERRACK, Material.MAGMA_BLOCK, Material.GRAVEL, Material.BASALT, Material.NETHER_GOLD_ORE, Material.NETHER_QUARTZ_ORE, Material.ANCIENT_DEBRIS, Material.GLOWSTONE, Material.BLACKSTONE, Material.WARPED_NYLIUM, Material.CRIMSON_NYLIUM);
 	private static final EnumSet<BlockFace> FACES = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 	private static final Timing TIMING = Timings.of(Skyblock.getPlugin(), "runBlockBreakers");
 	
 	public static void runBlockBreakers() {
 		TIMING.startTiming();
-		for(Location l : MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.BLOCK_BREAKER.name())) {
+		List<Location> loc = MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.BLOCK_BREAKER.name());
+		loc.addAll(MetadataStore.getByMetadataValue("type", String.class, CustomMaterial.ADVANCED_BLOCK_BREAKER.name()));
+		
+		for(Location l : loc) {
 			if(!l.getChunk().isLoaded()) continue;
+			if(!(l.getBlock().getBlockData() instanceof Dispenser)) {
+				MetadataStore.unsetMetadata(l);
+				continue;
+			}
+			
+			CustomMaterial type = MaterialManager.getType(l.getBlock());
+			
 			Dispenser d = (Dispenser) l.getBlock().getBlockData();
 			BlockFace f = d.getFacing();
 			if(FACES.stream().anyMatch(fc -> fc != f && l.getBlock().getBlockPower(fc) > 0)) continue;
@@ -36,6 +48,7 @@ public class BlockBreaker {
 					&& !toBreak.getBlock().isEmpty()
 					&& !toBreak.getBlock().isLiquid()
 					&& !UNBREAKABLE_BLOCKS.contains(toBreak.getBlock().getType())
+					&& (type == CustomMaterial.ADVANCED_BLOCK_BREAKER || !BASIC_DISALLOWED_BLOCKS.contains(toBreak.getBlock().getType()))
 					&& MaterialManager.getType(toBreak.getBlock()) == null) {
 				Block b = toBreak.getBlock();
 				ItemStack upgrade = MetadataStore.getMetadata(l, "block_breaker_upgrade", ItemStack.class);

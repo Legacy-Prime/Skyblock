@@ -41,21 +41,13 @@ public class Events implements Listener {
 	
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		if(event.getBlock().getState() instanceof CreatureSpawner && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-			// TODO: use custom spawner types instead
-			ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
-			if(tool == null || !tool.containsEnchantment(Enchantment.SILK_TOUCH)) return;
-			event.setExpToDrop(0);
-			ItemStack i = new ItemStack(Material.SPAWNER);
-			BlockStateMeta m = (BlockStateMeta) i.getItemMeta();
-			m.setBlockState(event.getBlock().getState());
-			i.setItemMeta(m);
-			event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), i);
-			return;
-		}
-		
 		CustomMaterial m;
 		if((m = MaterialManager.getType(event.getBlock())) != null) {
+			if(m.name().endsWith("_SPAWNER")) {
+				ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
+				if(tool == null || !tool.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+			}
+			
 			event.setDropItems(false);
 			event.setExpToDrop(0);
 			switch (m) {
@@ -63,6 +55,7 @@ public class Events implements Listener {
 					Grinder.breakGrinder(event.getBlock().getLocation());
 					break;
 				case BLOCK_BREAKER:
+				case ADVANCED_BLOCK_BREAKER:
 					BlockBreaker.breakBlockBreaker(event.getBlock().getLocation());
 					break;
 				default:

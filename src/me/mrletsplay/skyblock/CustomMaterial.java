@@ -50,6 +50,7 @@ public enum CustomMaterial {
 	
 	public ItemStack createItem(int amount) {
 		ItemStack it = item.clone();
+		it.setAmount(amount);
 		MaterialManager.applyType(it, this);
 		return it;
 	}

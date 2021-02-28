@@ -115,6 +115,17 @@ public class Recipes {
 		
 		registerSpawnerRecipe(CustomMaterial.BLAZE_SPAWNER, Material.BLAZE_ROD, true);
 		registerSpawnerRecipe(CustomMaterial.ENDERMAN_SPAWNER, Material.ENDER_PEARL, true);
+		
+		Bukkit.addRecipe(new ShapelessRecipe(createRecipeKey("slime_ball"), new ItemStack(Material.SLIME_BALL, 1))
+				.addIngredient(Material.WATER_BUCKET)
+				.addIngredient(Material.MAGMA_CREAM));
+		
+		Bukkit.addRecipe(new ShapedRecipe(createRecipeKey("blaze_rod"), new ItemStack(Material.BLAZE_ROD, 1))
+				.shape("CGC", "LSL", "CGC")
+				.setIngredient('C', Material.MAGMA_CREAM)
+				.setIngredient('G', Material.GOLD_BLOCK)
+				.setIngredient('L', Material.LAVA_BUCKET)
+				.setIngredient('S', Material.STICK));
 	}
 	
 	private static void registerSpawnerRecipe(CustomMaterial spawnerType, Material recipeType, boolean endGame) {

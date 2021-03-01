@@ -1,12 +1,10 @@
 package me.mrletsplay.skyblock.grinder;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import me.mrletsplay.skyblock.CustomMaterial;
@@ -27,11 +25,19 @@ public class GrinderEvents implements Listener {
 	
 	@EventHandler
 	public void onInventory(InventoryMoveItemEvent event) {
-		Location l = event.getDestination().getLocation();
-		if(l != null && event.getDestination().getType() == InventoryType.HOPPER) {
-			l.add(0, 1, 0);
-			if(MaterialManager.getType(l.getBlock()) == CustomMaterial.GRINDER) {
+		if(event.getSource().getLocation() != null) {
+			CustomMaterial m = MaterialManager.getType(event.getSource().getLocation().getBlock());
+			if(m == CustomMaterial.GRINDER) {
 				event.setCancelled(true);
+				return;
+			}
+		}
+		
+		if(event.getDestination().getLocation() != null) {
+			CustomMaterial m = MaterialManager.getType(event.getDestination().getLocation().getBlock());
+			if(m == CustomMaterial.GRINDER) {
+				event.setCancelled(true);
+				return;
 			}
 		}
 	}

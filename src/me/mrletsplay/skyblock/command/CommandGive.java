@@ -16,7 +16,7 @@ public class CommandGive extends BukkitCommand {
 	
 	public CommandGive() {
 		super("give");
-		setDescription("Give yourself a LP-Skyblock item");
+		setDescription("Give yourself an LP-Skyblock item");
 		setUsage("/lpskyblock give <type>");
 		getProperties().setPermission("lpskyblock.give");
 		

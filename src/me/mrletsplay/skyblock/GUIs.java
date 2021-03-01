@@ -24,6 +24,7 @@ import me.mrletsplay.mrcore.bukkitimpl.ItemUtils;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUI;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUIBuilder;
 import me.mrletsplay.mrcore.bukkitimpl.gui.GUIElement;
+import me.mrletsplay.mrcore.bukkitimpl.gui.GUIHolder;
 import me.mrletsplay.mrcore.bukkitimpl.gui.StaticGUIElement;
 import me.mrletsplay.mrcore.bukkitimpl.gui.event.GUIBuildEvent;
 import me.mrletsplay.mrcore.bukkitimpl.versioned.VersionedMaterial;
@@ -46,8 +47,8 @@ public class GUIs {
 	public static void loadGUIs() {
 		GRINDER = buildGrinderGUI();
 		COMPOSTER_SELECT = buildComposterSelectGUI();
-		BLOCK_BREAKER = buildBlockBreakerGUI("§6Block Breaker");
-		ADVANCED_BLOCK_BREAKER = buildBlockBreakerGUI("§5Advanced Block Breaker");
+		BLOCK_BREAKER = buildBlockBreakerGUI("§6Block Breaker", false);
+		ADVANCED_BLOCK_BREAKER = buildBlockBreakerGUI("§5Advanced Block Breaker", true);
 	}
 	
 	private static GUI buildGrinderGUI() {
@@ -213,7 +214,7 @@ public class GUIs {
 		return s;
 	}
 	
-	private static GUI buildBlockBreakerGUI(String name) {
+	private static GUI buildBlockBreakerGUI(String name, boolean advanced) {
 		GUIBuilder b = new GUIBuilder(name, 3);
 		
 		for(int i = 0; i < 3 * 9; i++) {
@@ -234,6 +235,7 @@ public class GUIs {
 				event.setCallback(() -> {
 					Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
 					MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getSlotAfter());
+					(advanced ? ADVANCED_BLOCK_BREAKER : BLOCK_BREAKER).refreshAllInstances();
 				});
 				event.setCancelled(false);
 			}
@@ -244,6 +246,7 @@ public class GUIs {
 				event.setCallback(() -> {
 					Location blockBreaker = (Location) event.getGUIHolder().getProperty(Skyblock.getPlugin(), "block_breaker_location");
 					MetadataStore.setMetadata(blockBreaker, "block_breaker_upgrade", event.getSlotAfter());
+					(advanced ? ADVANCED_BLOCK_BREAKER : BLOCK_BREAKER).refreshAllInstances();
 				});
 				event.setCancelled(false);
 			}
@@ -258,10 +261,34 @@ public class GUIs {
 		return GRINDER.getForPlayer(p, Skyblock.getPlugin(), props);
 	}
 	
+	public static void closeGrinderGUIs(Location grinder) {
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
+				Inventory oldInv = player.getOpenInventory().getTopInventory();
+				GUIHolder holder = GUI.getGUIHolder(oldInv);
+				if(holder != null && holder.getGUI().equals(GRINDER)) {
+					if(grinder.equals(holder.getProperty(Skyblock.getPlugin(), "grinder_location"))) player.closeInventory();
+				}
+			}
+		}
+	}
+	
 	public static Inventory getBlockBreakerGUI(Player p, Location blockBreaker, boolean advanced) {
 		Map<String, Object> props = new HashMap<>();
 		props.put("block_breaker_location", blockBreaker);
 		return (advanced ? ADVANCED_BLOCK_BREAKER : BLOCK_BREAKER).getForPlayer(p, Skyblock.getPlugin(), props);
+	}
+	
+	public static void closeBlockBreakerGUIs(Location breaker) {
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
+				Inventory oldInv = player.getOpenInventory().getTopInventory();
+				GUIHolder holder = GUI.getGUIHolder(oldInv);
+				if(holder != null && (holder.getGUI().equals(BLOCK_BREAKER) || holder.getGUI().equals(ADVANCED_BLOCK_BREAKER))) {
+					if(breaker.equals(holder.getProperty(Skyblock.getPlugin(), "block_breaker_location"))) player.closeInventory();
+				}
+			}
+		}
 	}
 	
 	public static Inventory getComposterSelectGUI(Player p) {

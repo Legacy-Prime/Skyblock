@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import me.mrletsplay.skyblock.CustomMaterial;
+import me.mrletsplay.skyblock.GUIs;
 import me.mrletsplay.skyblock.MaterialManager;
 import me.mrletsplay.skyblock.MetadataStore;
 import me.mrletsplay.skyblock.Skyblock;
@@ -79,6 +80,7 @@ public class BlockBreaker {
 	}
 	
 	public static void breakBlockBreaker(Location blockBreaker) {
+		GUIs.closeBlockBreakerGUIs(blockBreaker);
 		ItemStack upgrade = MetadataStore.getMetadata(blockBreaker, "block_breaker_upgrade", ItemStack.class);
 		if(upgrade != null && upgrade.getType() != Material.AIR) blockBreaker.getWorld().dropItemNaturally(blockBreaker, upgrade);
 	}

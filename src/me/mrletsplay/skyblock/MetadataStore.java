@@ -18,7 +18,7 @@ public class MetadataStore {
 	
 	static {
 		File f = new File(Skyblock.getPlugin().getDataFolder(), "metadata.yml");
-		config = ConfigLoader.loadConfigFromFile(new BukkitCustomConfig(f), f, true);
+		config = ConfigLoader.loadConfigFromFile(new BukkitCustomConfig(f), f);
 	}
 	
 	public static void setMetadata(Location loc, String key, Object value) {

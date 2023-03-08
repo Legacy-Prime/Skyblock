@@ -16,7 +16,6 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
-@SuppressWarnings("deprecation")
 public class Recipes {
 	
 	private static List<NamespacedKey> recipes;

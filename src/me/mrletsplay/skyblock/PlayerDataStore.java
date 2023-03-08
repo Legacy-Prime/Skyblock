@@ -12,7 +12,7 @@ public class PlayerDataStore {
 	
 	static {
 		File f = new File(Skyblock.getPlugin().getDataFolder(), "playerdata.yml");
-		config = ConfigLoader.loadConfigFromFile(new BukkitCustomConfig(f), f, true);
+		config = ConfigLoader.loadConfigFromFile(new BukkitCustomConfig(f), f);
 	}
 	
 	public static void setData(UUID ownerID, String key, Object value) {
